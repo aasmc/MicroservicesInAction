@@ -6,6 +6,8 @@ FROM openjdk:11-slim as build
 LABEL maintainer="Alex Alex <mail@mail.com>"
 
 # The application's jar file
+# Defines variables that the user can pass to the builder using the docker build
+# command. We use maven plugin, so it is set by the plugin.
 ARG JAR_FILE
 
 # Add the application's jar to the container
