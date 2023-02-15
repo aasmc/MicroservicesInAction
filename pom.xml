@@ -19,6 +19,7 @@
     <description>MicroservicesInAction</description>
     <properties>
         <java.version>11</java.version>
+        <docker.image.prefix>ostock</docker.image.prefix>
     </properties>
 
 </project>
