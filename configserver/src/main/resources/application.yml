@@ -3,15 +3,15 @@ spring:
     name: config-server
   profiles:
     active:
-      - native
+      - native #, git
   cloud:
     config:
       server:
         native:
           search-locations: classpath:/config
-          #git:
-          # uri: https://github.com/user/repo.git
-          #searchPaths: licensingservice
+#        git:
+#          uri: https://github.com/user/repo.git
+#          searchPaths: licensingservice
 
 server:
   port: 8071

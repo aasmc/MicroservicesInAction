@@ -11,6 +11,14 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import java.util.Locale;
 
 @SpringBootApplication
+/**
+ * This annotation enables the microservice to refresh properties at runtime
+ * using Spring Boot Actuator /refresh endpoint
+ * This annotation only
+ * reloads the custom Spring properties you have in your application configuration.
+ * Items like your database configuration used by Spring Data won’t be reloaded by this
+ * annotation.
+ */
 @RefreshScope
 public class LicensingServiceApplication {
     public static void main(String[] args) {
