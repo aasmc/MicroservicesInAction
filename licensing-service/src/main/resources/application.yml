@@ -10,3 +10,11 @@ management:
       enabled: false
     diskspace:
       enabled: true
+spring:
+  application:
+    name: licensing-service
+  profiles:
+    active: dev
+  cloud:
+    config:
+      uri: http://configserver:8071
