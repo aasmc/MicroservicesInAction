@@ -7,9 +7,9 @@ import java.util.Locale;
 public interface LicenseService {
     License getLicense(String licenceId, String organizationId);
 
-    String createLicense(License license, String organizationId, Locale locale);
+    License createLicense(License license);
 
-    String updateLicense(License license, String organizationId);
+    License updateLicense(License license);
 
-    String deleteLicense(String licenseId, String organizationId);
+    String deleteLicense(String licenseId);
 }
