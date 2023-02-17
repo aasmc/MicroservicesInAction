@@ -7,4 +7,4 @@ services:
       - "8080:8080"
     environment:
       - "SPRING_PROFILE_ACTIVE=dev"
-      - "SPRING_CONFIG_IMPORT = configserver:http://localhost:8071"
+      - "SPRING_CONFIG_IMPORT = configserver:http://configserver:8071"

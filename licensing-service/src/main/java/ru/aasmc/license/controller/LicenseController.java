@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.aasmc.license.model.License;
+import ru.aasmc.license.model.LicenseCollection;
 import ru.aasmc.license.service.LicenseService;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -23,7 +24,7 @@ public class LicenseController {
     @RequestMapping(value = "/{licenseId}", method = RequestMethod.GET)
     public ResponseEntity<License> getLicense(@PathVariable("organizationId") String organizationId,
                                               @PathVariable("licenseId") String licenseId) {
-        License license = licenseService.getLicense(licenseId, organizationId);
+        License license = licenseService.getLicense(licenseId, organizationId, "");
         license.add(
                 linkTo(methodOn(LicenseController.class).getLicense(organizationId, license.getLicenseId())).withSelfRel(),
                 linkTo(methodOn(LicenseController.class).createLicense(license)).withRel("createLicense"),
@@ -31,6 +32,13 @@ public class LicenseController {
                 linkTo(methodOn(LicenseController.class).deleteLicense(license.getLicenseId())).withRel("deleteLicense")
         );
         return ResponseEntity.ok(license);
+    }
+
+    @RequestMapping(value = "/{licenseId}/{clientType}", method = RequestMethod.GET)
+    public License getLicenseWithClient(@PathVariable("organizationId") String organizationId,
+                                        @PathVariable("licenseId") String licenseId,
+                                        @PathVariable("clientType") String clientType) {
+        return licenseService.getLicense(licenseId, organizationId, clientType);
     }
 
     @PutMapping
@@ -46,5 +54,10 @@ public class LicenseController {
     @DeleteMapping(value = "/{licenseId}")
     public ResponseEntity<String> deleteLicense(@PathVariable("licenseId") String licenseId) {
         return ResponseEntity.ok(licenseService.deleteLicense(licenseId));
+    }
+
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public LicenseCollection getLicenses(@PathVariable("organizationId") String organizationId) {
+        return new LicenseCollection(licenseService.getLicenseByOrganization(organizationId));
     }
 }
