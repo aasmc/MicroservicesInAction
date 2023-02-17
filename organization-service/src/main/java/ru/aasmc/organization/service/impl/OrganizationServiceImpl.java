@@ -25,7 +25,6 @@ public class OrganizationServiceImpl implements OrganizationService {
     @Override
     public Organization create(Organization organization) {
         organization.setId(UUID.randomUUID().toString());
-        ;
         organization = repository.save(organization);
         return organization;
     }
