@@ -15,15 +15,14 @@ import java.util.List;
 public class OrganizationDiscoveryClient {
 
     private final DiscoveryClient discoveryClient;
-    private final RestTemplate discoveryTemplate;
 
     @Autowired
     public OrganizationDiscoveryClient(DiscoveryClient discoveryClient, RestTemplate discoveryTemplate) {
         this.discoveryClient = discoveryClient;
-        this.discoveryTemplate = discoveryTemplate;
     }
 
     public Organization getOrganization(String organizationId) {
+        RestTemplate discoveryTemplate= new RestTemplate();
         List<ServiceInstance> instances = discoveryClient.getInstances("organization-service");
         if (instances.size() == 0) return null;
         String serviceUri = String.format(
