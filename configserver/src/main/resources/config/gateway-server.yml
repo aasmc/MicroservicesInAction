@@ -20,7 +20,7 @@ spring:
         # automated mapping of routes via Eureka Service Discovery
         locator:
           enabled: true
-          lower-case-servie-id: true
+          lower-case-service-id: true
       # manual mapping of routes
       routes:
         - id: organization-service
