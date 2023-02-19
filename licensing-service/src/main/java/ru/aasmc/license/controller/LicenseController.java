@@ -1,17 +1,22 @@
 package ru.aasmc.license.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.aasmc.license.model.License;
 import ru.aasmc.license.model.LicenseCollection;
 import ru.aasmc.license.service.LicenseService;
+import ru.aasmc.license.utils.UserContextHolder;
+
+import java.util.concurrent.TimeoutException;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping(value = "v1/organization/{organizationId}/license")
+@Slf4j
 public class LicenseController {
 
     private final LicenseService licenseService;
@@ -57,7 +62,8 @@ public class LicenseController {
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public LicenseCollection getLicenses(@PathVariable("organizationId") String organizationId) {
+    public LicenseCollection getLicenses(@PathVariable("organizationId") String organizationId) throws TimeoutException {
+        log.debug("LicenseServiceController Correlation id: {}", UserContextHolder.getContext().getCorrelationId());
         return new LicenseCollection(licenseService.getLicenseByOrganization(organizationId));
     }
 }

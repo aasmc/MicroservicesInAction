@@ -1,5 +1,10 @@
 package ru.aasmc.license.service.impl;
 
+import io.github.resilience4j.bulkhead.annotation.Bulkhead;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import io.github.resilience4j.retry.annotation.Retry;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
@@ -11,13 +16,17 @@ import ru.aasmc.license.service.LicenseService;
 import ru.aasmc.license.service.client.OrganizationDiscoveryClient;
 import ru.aasmc.license.service.client.OrganizationFeignClient;
 import ru.aasmc.license.service.client.OrganizationRestTemplateClient;
+import ru.aasmc.license.utils.UserContextHolder;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.TimeoutException;
 
 @Service
+@Slf4j
 public class LicenseServiceImpl implements LicenseService {
-
     private final MessageSource messages;
     private final LicenseRepository licenseRepository;
     private final ServiceConfig config;
@@ -58,6 +67,7 @@ public class LicenseServiceImpl implements LicenseService {
         return license.withComment(config.getProperty());
     }
 
+    @CircuitBreaker(name = "organizationService")
     private Organization retrieveOrganizationInfo(String organizationId, String clientType) {
         Organization organization = null;
         switch (clientType) {
@@ -103,8 +113,48 @@ public class LicenseServiceImpl implements LicenseService {
         return responseMessage;
     }
 
-    public List<License> getLicenseByOrganization(String organizationId) {
+    @CircuitBreaker(name = "licenseService", fallbackMethod = "buildFallbackLicenseList")
+    @RateLimiter(name = "licenseService", fallbackMethod = "buildFallbackLicenseList")
+    @Retry(name = "retryLicenseService", fallbackMethod = "buildFallbackLicenseList")
+    @Bulkhead(name = "bulkheadLicenseService", type = Bulkhead.Type.THREADPOOL, fallbackMethod = "buildFallbackLicenseList")
+    @Override
+    public List<License> getLicenseByOrganization(String organizationId) throws TimeoutException {
+        log.debug("getLicenseByOrganization Correlation id: {}", UserContextHolder.getContext().getCorrelationId());
+        // simulate random long running call for educational purposes
+        randomlyRunLong();
         return licenseRepository.findByOrganizationId(organizationId);
+    }
+
+    /**
+     * To create the fallback method in Resilience4j, we need to create a method that
+     * contains the same signature as the originating function plus one extra parameter,
+     * which is the target exception parameter. With the same signature, we can pass all
+     * the parameters from the original method to the fallback method.
+     */
+    private List<License> buildFallbackLicenseList(String organizationId, Throwable t) {
+        List<License> fallbackList = new ArrayList<>();
+        License license = new License();
+        license.setLicenseId("0000000-00-00000");
+        license.setOrganizationId(organizationId);
+        license.setProductName("Sorry no licensing information currently available");
+        fallbackList.add(license);
+        return fallbackList;
+    }
+
+    private void randomlyRunLong() throws TimeoutException {
+        Random random = new Random();
+        int randomNum = random.nextInt(3) + 1;
+        if (randomNum == 3) sleep();
+    }
+
+    private void sleep() throws TimeoutException {
+        try {
+            System.out.println("Sleep");
+            Thread.sleep(5000L);
+            throw new java.util.concurrent.TimeoutException();
+        } catch (InterruptedException e) {
+            log.error(e.getMessage());
+        }
     }
 
 }
