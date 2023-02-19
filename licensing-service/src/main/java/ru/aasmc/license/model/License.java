@@ -1,8 +1,6 @@
 package ru.aasmc.license.model;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
@@ -12,6 +10,8 @@ import javax.persistence.*;
 @ToString
 @Entity
 @Table(name = "licenses")
+@AllArgsConstructor
+@NoArgsConstructor
 public class License extends RepresentationModel<License> {
 
     @Id
