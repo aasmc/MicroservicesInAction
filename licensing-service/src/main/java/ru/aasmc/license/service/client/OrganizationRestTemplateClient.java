@@ -1,6 +1,8 @@
 package ru.aasmc.license.service.client;
 
+import org.keycloak.adapters.springsecurity.client.KeycloakRestTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -9,10 +11,10 @@ import ru.aasmc.license.model.Organization;
 
 @Component
 public class OrganizationRestTemplateClient {
-    private final RestTemplate restTemplate;
+    private final KeycloakRestTemplate restTemplate;
 
     @Autowired
-    public OrganizationRestTemplateClient(RestTemplate restTemplate) {
+    public OrganizationRestTemplateClient(@Qualifier("keycloak") KeycloakRestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 

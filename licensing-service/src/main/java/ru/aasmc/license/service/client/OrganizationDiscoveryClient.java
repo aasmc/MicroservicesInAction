@@ -1,6 +1,7 @@
 package ru.aasmc.license.service.client;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.http.HttpMethod;
@@ -15,14 +16,15 @@ import java.util.List;
 public class OrganizationDiscoveryClient {
 
     private final DiscoveryClient discoveryClient;
-
+    private final RestTemplate discoveryTemplate;
     @Autowired
-    public OrganizationDiscoveryClient(DiscoveryClient discoveryClient, RestTemplate discoveryTemplate) {
+    public OrganizationDiscoveryClient(DiscoveryClient discoveryClient,
+                                       @Qualifier("discovery") RestTemplate restTemplate) {
         this.discoveryClient = discoveryClient;
+        this.discoveryTemplate = restTemplate;
     }
 
     public Organization getOrganization(String organizationId) {
-        RestTemplate discoveryTemplate= new RestTemplate();
         List<ServiceInstance> instances = discoveryClient.getInstances("organization-service");
         if (instances.size() == 0) return null;
         String serviceUri = String.format(

@@ -21,7 +21,7 @@ spring:
         locator:
           enabled: true
           lower-case-service-id: true
-      # manual mapping of routes
+#       manual mapping of routes
       routes:
         - id: organization-service
           uri: lb://organization-service
@@ -29,12 +29,14 @@ spring:
             - Path=/organization/**
           filters:
             - RewritePath=/organization/(?<path>.*), /$\{path}
+            - RemoveRequestHeader= Cookie,Set-Cookie
         - id: licensing-service
           uri: lb://licensing-service
           predicates:
             - Path=/license/**
           filters:
             - RewritePath=/license/(?<path>.*), /$\{path}
+            - RemoveRequestHeader= Cookie,Set-Cookie
 
 management:
   endpoints:
