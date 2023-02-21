@@ -15,4 +15,5 @@ public class OrganizationServiceApplication {
         SpringApplication.run(OrganizationServiceApplication.class, args);
     }
 
+
 }

@@ -56,7 +56,7 @@ public class LicenseServiceImpl implements LicenseService {
     public License getLicense(String licenceId, String organizationId, String clientType) {
         License license = licenseRepository.findByOrganizationIdAndLicenseId(organizationId, licenceId)
                 .orElseThrow(() -> new IllegalArgumentException(String.format(
-                        messages.getMessage("license.search.error.messaga", null, null),
+                        messages.getMessage("license.search.error.message", null, null),
                         licenceId,
                         organizationId
                 )));
