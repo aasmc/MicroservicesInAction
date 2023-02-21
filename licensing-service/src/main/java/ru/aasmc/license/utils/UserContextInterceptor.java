@@ -1,6 +1,7 @@
 package ru.aasmc.license.utils;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
@@ -13,8 +14,9 @@ import java.io.IOException;
  * Interceptor used by RestTemplate.
  * Ensures that all outgoing requests have necessary headers.
  */
-@Slf4j
 public class UserContextInterceptor implements ClientHttpRequestInterceptor {
+
+    final Logger log = LoggerFactory.getLogger(UserContextInterceptor.class);
 
     @Override
     public ClientHttpResponse intercept(HttpRequest request,

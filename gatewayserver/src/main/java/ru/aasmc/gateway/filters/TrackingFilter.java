@@ -1,6 +1,7 @@
 package ru.aasmc.gateway.filters;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -12,8 +13,9 @@ import reactor.core.publisher.Mono;
 
 @Order(1)
 @Component
-@Slf4j
 public class TrackingFilter implements GlobalFilter {
+
+    final Logger log = LoggerFactory.getLogger(TrackingFilter.class);
 
     private final FilterUtils filterUtils;
 

@@ -4,7 +4,8 @@ import io.github.resilience4j.bulkhead.annotation.Bulkhead;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.github.resilience4j.retry.annotation.Retry;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
@@ -25,8 +26,10 @@ import java.util.UUID;
 import java.util.concurrent.TimeoutException;
 
 @Service
-@Slf4j
 public class LicenseServiceImpl implements LicenseService {
+
+    final Logger log = LoggerFactory.getLogger(LicenseServiceImpl.class);
+
     private final MessageSource messages;
     private final LicenseRepository licenseRepository;
     private final ServiceConfig config;

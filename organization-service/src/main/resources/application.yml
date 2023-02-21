@@ -4,4 +4,10 @@ spring:
   profiles:
     active: dev
   config:
-    import: optional:configserver:http://localhost:8071
+    import: optional:configserver:http://configserver:8071
+
+logging:
+  level:
+    com.netflix: WARN
+    org.springframework.web: WARN
+    ru.aasmc: DEBUG

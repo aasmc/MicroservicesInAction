@@ -1,6 +1,7 @@
 package ru.aasmc.organization.utils;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
@@ -8,8 +9,10 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 @Component
-@Slf4j
 public class UserContextFilter implements Filter {
+
+    final Logger log = LoggerFactory.getLogger(UserContextFilter.class);
+
     @Override
     public void doFilter(ServletRequest servletRequest,
                          ServletResponse servletResponse,
