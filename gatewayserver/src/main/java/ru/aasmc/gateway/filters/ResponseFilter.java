@@ -1,5 +1,7 @@
 package ru.aasmc.gateway.filters;
 
+import brave.Tracer;
+import brave.propagation.TraceContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,8 @@ public class ResponseFilter {
     @Autowired
     private FilterUtils filterUtils;
 
+    @Autowired
+    private Tracer tracer;
 
     /**
      * Passes the necessary headers back to the client of the microservice.
@@ -25,10 +29,16 @@ public class ResponseFilter {
     public GlobalFilter postGlobalFilter() {
         return ((exchange, chain) -> {
             return chain.filter(exchange).then(Mono.fromRunnable(() -> {
-                HttpHeaders requestHeaders = exchange.getRequest().getHeaders();
-                String correlationId = filterUtils.getCorrelationId(requestHeaders);
-                log.debug("Adding the correlation id to the outbound headers. {}", correlationId);
-                exchange.getResponse().getHeaders().add(FilterUtils.CORRELATION_ID, correlationId);
+                String traceId;
+                TraceContext context = tracer.currentSpan().context();
+                if (context != null) {
+                    traceId = context.traceIdString();
+                } else {
+                    HttpHeaders requestHeaders = exchange.getRequest().getHeaders();
+                    traceId = filterUtils.getCorrelationId(requestHeaders);
+                }
+                log.debug("Adding the correlation id to the outbound headers. {}", traceId);
+                exchange.getResponse().getHeaders().add(FilterUtils.CORRELATION_ID, traceId);
                 log.debug("Completing outgoing request for {}.", exchange.getRequest().getURI());
             }));
         });

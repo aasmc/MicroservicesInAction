@@ -11,6 +11,11 @@ eureka:
       defaultZone: http://eurekaserver:8070/eureka/
 
 spring:
+  zipkin:
+    baseUrl: http://zipkin:9411
+  sleuth:
+    sampler:
+      percentage: 1
   cloud:
     loadbalancer:
       ribbon:

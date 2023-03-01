@@ -1,5 +1,7 @@
 package ru.aasmc.license.service.client;
 
+import brave.ScopedSpan;
+import brave.Tracer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +20,14 @@ public class OrganizationRestTemplateClient {
     private final RestTemplate restTemplate;
     private final OrganizationRedisRepository redisRepository;
 
+    private final Tracer tracer;
+
     @Autowired
     public OrganizationRestTemplateClient(RestTemplate restTemplate,
-                                          OrganizationRedisRepository redisRepository) {
+                                          OrganizationRedisRepository redisRepository, Tracer tracer) {
         this.restTemplate = restTemplate;
         this.redisRepository = redisRepository;
+        this.tracer = tracer;
     }
 
     public Organization getOrganization(String organizationId) {
@@ -49,12 +54,17 @@ public class OrganizationRestTemplateClient {
     }
 
     private Organization checkRedisCache(String organizationId) {
+        ScopedSpan newSpan = tracer.startScopedSpan("readLicensingDataFromRedis");
         try {
             return redisRepository.findById(organizationId).orElse(null);
         } catch (Exception e) {
             logger.error("Error encountered while trying to retrieve organization {} " +
                     ". Method: checkRedisCache(). Exception {}", organizationId, e.getMessage());
             return null;
+        } finally {
+            newSpan.tag("peer.service", "redis");
+            newSpan.annotate("Client received");
+            newSpan.finish();
         }
     }
 
