@@ -37,7 +37,7 @@ public class OrganizationRestTemplateClient {
         logger.debug("Unable to locate organization from the redis cache: {}", organizationId);
 
         ResponseEntity<Organization> exchange = restTemplate.exchange(
-                "http://gatewayserver:8072/organization/v1/organization/{organizationId}",
+                "http://gateway-server:8072/organization/v1/organization/{organizationId}",
                 HttpMethod.GET,
                 null, Organization.class, organizationId
         );
